@@ -1,12 +1,12 @@
 class CommentsController < ApplicationController
   before_action :set_comment, only: %i[ show edit update destroy ]
 
-  # GET /comments or /comments.json
+  # GET /comments
   def index
     @comments = Comment.all
   end
 
-  # GET /comments/1 or /comments/1.json
+  # GET /comments/1
   def show
   end
 
@@ -19,7 +19,7 @@ class CommentsController < ApplicationController
   def edit
   end
 
-  # POST /comments or /comments.json
+  # POST /comments
   def create
     @comment = Comment.new(comment_params)
     @comment.author = current_user
@@ -35,11 +35,11 @@ class CommentsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /comments/1 or /comments/1.json
+  # PATCH/PUT /comments/1
   def update
     respond_to do |format|
       if @comment.update(comment_params)
-        format.html { redirect_to @comment, notice: "Comment was successfully updated." }
+        format.html { redirect_to feed_path(current_user.username), notice: "Comment was successfully updated." }
         format.json { render :show, status: :ok, location: @comment }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -48,23 +48,21 @@ class CommentsController < ApplicationController
     end
   end
 
-  # DELETE /comments/1 or /comments/1.json
+  # DELETE /comments/1
   def destroy
     @comment.destroy!
 
     respond_to do |format|
-      format.html { redirect_to comments_path, status: :see_other, notice: "Comment was successfully destroyed." }
+      format.html { redirect_to feed_path(current_user.username), status: :see_other, notice: "Comment was successfully destroyed." }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_comment
       @comment = Comment.find(params.expect(:id))
     end
 
-    # Only allow a list of trusted parameters through.
     def comment_params
       params.expect(comment: [ :author_id, :photo_id, :body ])
     end

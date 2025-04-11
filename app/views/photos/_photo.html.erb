@@ -1,27 +1,56 @@
-<div id="<%= dom_id photo %>">
-  <p>
-    <strong>Image:</strong>
-    <%= image_tag photo.image_url %>
-  </p>
+<div class="card">
+  <%= image_tag photo.image_url, class: "card-img-top" %>
+  <div class="card-body">
+    <h5 class="card-title"><%= photo.owner.username %></h5>
+    <p class="card-text"><%= photo.caption %></p>
+  </div>
 
-  <p>
-    <strong>Comments count:</strong>
-    <%= photo.comments_count %>
-  </p>
+  <ul class="list-group list-group-flush">
+    <% photo.comments.each do |comment| %>
+      <li class="list-group-item">
+        <div class="d-flex align-items-center">
+          <div class="flex-shrink-0">
+            <%= image_tag comment.author.avatar_image_url, class: "rounded-circle me-2", width: "36px" %>
+          </div>
+          <div class="flex-grow-1">
+            <h5 class="mt-0"><%= comment.author.username %></h5>
+            <p><%= comment.body %></p>
+          </div>
+          <% if comment.author == current_user %>
+            <div class="ms-auto">
+              <%= link_to edit_comment_path(comment), class: "fa-edit" do %>
+                <i class="fa fa-edit"></i>
+              <% end %>
+              <%= link_to comment_path(comment), method: :delete, data: { confirm: "Are you sure?" }, class: "fa-trash" do %>
+                <i class="fa fa-trash"></i>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
 
-  <p>
-    <strong>Likes count:</strong>
-    <%= photo.likes_count %>
-  </p>
+  <div class="card-body">
+    <%= render "comments/form", comment: photo.comments.build %>
+  </div>
 
-  <p>
-    <strong>Caption:</strong>
-    <%= photo.caption %>
-  </p>
+  <div class="card-footer">
+    <% if current_user.likes.find_by(photo_id: photo.id).present? %>
+      <% like = current_user.likes.find_by(photo_id: photo.id) %>
+      <%= button_to "Un-like", photo_like_path(photo, like), method: :delete %>
+    <% else %>
+      <%= button_to "Like", photo_likes_path(photo), method: :post %>
+    <% end %>
 
-  <p>
-    <strong>Owner:</strong>
-    <%= photo.owner_id %>
-  </p>
-
+    <%# Only show edit/delete controls for photos owned by the current user %>
+    <% if photo.owner == current_user %>
+      <%= link_to edit_photo_path(photo), class: "fa-edit" do %>
+        <i class="fa fa-edit"></i>
+      <% end %>
+      <%= link_to photo_path(photo), method: :delete, data: { confirm: "Are you sure?" }, class: "fa-trash" do %>
+        <i class="fa fa-trash"></i>
+      <% end %>
+    <% end %>
+  </div>
 </div>

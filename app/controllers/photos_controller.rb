@@ -1,27 +1,23 @@
 class PhotosController < ApplicationController
   before_action :set_photo, only: %i[ show edit update destroy ]
 
-  # GET /photos or /photos.json
   def index
     @photos = Photo.all
   end
 
-  # GET /photos/1 or /photos/1.json
   def show
   end
 
-  # GET /photos/new
   def new
     @photo = Photo.new
   end
 
-  # GET /photos/1/edit
   def edit
   end
 
-  # POST /photos or /photos.json
   def create
     @photo = Photo.new(photo_params)
+    @photo.owner = current_user  # Set the owner to the signed-in user
 
     respond_to do |format|
       if @photo.save
@@ -34,7 +30,6 @@ class PhotosController < ApplicationController
     end
   end
 
-  # PATCH/PUT /photos/1 or /photos/1.json
   def update
     respond_to do |format|
       if @photo.update(photo_params)
@@ -47,7 +42,6 @@ class PhotosController < ApplicationController
     end
   end
 
-  # DELETE /photos/1 or /photos/1.json
   def destroy
     @photo.destroy!
 
@@ -58,13 +52,13 @@ class PhotosController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
     def set_photo
       @photo = Photo.find(params.expect(:id))
     end
 
-    # Only allow a list of trusted parameters through.
     def photo_params
-      params.expect(photo: [ :image, :comments_count, :likes_count, :caption, :owner_id ])
+      # Removed :owner_id since we'll assign that from current_user
+      params.expect(photo: [ :image, :comments_count, :likes_count, :caption ])
     end
 end
