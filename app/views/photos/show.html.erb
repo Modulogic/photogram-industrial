@@ -3,8 +3,13 @@
 <%= render @photo %>
 
 <div>
-  <%= link_to "Edit this photo", edit_photo_path(@photo) %> |
-  <%= link_to "Back to photos", photos_path %>
-
-  <%= button_to "Destroy this photo", @photo, method: :delete %>
+  <%= link_to edit_photo_path(@photo), class: "fa-edit" do %>
+    <i class="fa fa-edit"></i>
+  <% end %>
+  <%= link_to photos_path do %>
+    Back to photos
+  <% end %>
+  <%= link_to @photo, method: :delete, data: { confirm: "Are you sure?" }, class: "fa-trash" do %>
+    <i class="fa fa-trash"></i>
+  <% end %>
 </div>
